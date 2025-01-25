@@ -1,0 +1,88 @@
+
+// Define honeycomb parameters
+#define LAYER "#6"    // Layer name or number
+#define RADIUS 10.0   // Radius of each hexagon
+#define ROWS 40       // Number of rows in the honeycomb
+#define COLUMNS 40    // Number of columns in the honeycomb
+#define SQRT_3 1.73205// Approximation of sqrt(3)
+#define HORIZONTAL_SPACING 10.0
+#define VERTICAL_SPACING 10.0
+#define HORIZONTAL_SPACING_GRADIENT 1.05
+#define VERTICAL_SPACING_GRADIENT 1.05
+#define RADIUS_GRADIENT 1.025
+#define HEXAGON 1// 1  hexagons or 0 for circles
+
+void DrawCircle(double xCenter, double yCenter, double radius) {
+    layer(LAYER);
+    circle(xCenter, yCenter, radius);
+}
+
+void DrawHexagon(double xCenter, double yCenter, double radius) {
+    double nodes[12];// Array to hold the x, y coordinates of 6 vertices
+
+    // Calculate each vertex of the hexagon using the radius and trigonometric approximations
+    nodes[0] = xCenter;
+    nodes[1] = yCenter + radius;// Vertex 1
+    nodes[2] = xCenter + SQRT_3 / 2 * radius;
+    nodes[3] = yCenter + 0.5 * radius;
+    nodes[4] = xCenter + SQRT_3 / 2 * radius;// Vertex 3
+    nodes[5] = yCenter - 0.5 * radius;
+    nodes[6] = xCenter;
+    nodes[7] = yCenter - radius;             // Vertex 4
+    nodes[8] = xCenter - SQRT_3 / 2 * radius;// Vertex 5
+    nodes[9] = yCenter - 0.5 * radius;
+    nodes[10] = xCenter - SQRT_3 / 2 * radius;// Vertex 6
+    nodes[11] = yCenter + 0.5 * radius;
+
+    // Draw the hexagon as a polygon on the specified layer
+    layer(LAYER);
+    polygon(6, nodes);
+}
+
+
+// Main function to create a honeycomb grid
+void DrawHoneycomb() {
+    double x_offset, x_center, y_center;
+    int row, col;
+    double drow, dcol;
+
+    x_center = 0;
+    y_center = 0;
+    x_offset = 0;
+    drow = 0.0;
+    dcol = 0.0;
+
+    for (row = 0; row < ROWS; ++row) {
+        if (row % 2) x_offset = 0;
+        else
+            x_offset = (HORIZONTAL_SPACING + HORIZONTAL_SPACING * (HORIZONTAL_SPACING_GRADIENT - 1.0) * drow) / 2 + RADIUS;
+
+        x_center = x_offset;
+        for (col = 0; col < COLUMNS / 2; ++col) {
+            if (HEXAGON)
+                DrawHexagon(x_center, y_center, RADIUS + RADIUS * (RADIUS_GRADIENT - 1.0) * drow);
+            else
+                DrawCircle(x_center, y_center, RADIUS + RADIUS * (RADIUS_GRADIENT - 1.0) * row);
+
+            x_center += HORIZONTAL_SPACING + HORIZONTAL_SPACING * (HORIZONTAL_SPACING_GRADIENT - 1.0) * drow + 2 * RADIUS;
+        }
+
+        x_center = x_offset;
+        for (col = 0; col < COLUMNS / 2; ++col) {
+            if (HEXAGON)
+                DrawHexagon(x_center, y_center, RADIUS + RADIUS * (RADIUS_GRADIENT - 1.0) * drow);
+            else
+                DrawCircle(x_center, y_center, RADIUS + RADIUS * (RADIUS_GRADIENT - 1.0) * row);
+
+            x_center -= HORIZONTAL_SPACING + HORIZONTAL_SPACING * (HORIZONTAL_SPACING_GRADIENT - 1.0) * drow + 2 * RADIUS;
+        }
+
+        y_center += VERTICAL_SPACING + VERTICAL_SPACING * (VERTICAL_SPACING_GRADIENT - 1.0) * drow + 2 * RADIUS;
+
+        drow += 1.0;
+        dcol += 1.0;
+    }
+}
+
+// Run the honeycomb generation function
+DrawHoneycomb();

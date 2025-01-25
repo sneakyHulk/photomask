@@ -1,23 +1,25 @@
 #include <SDL2/SDL.h>
 #include <stdio.h>
 
-#define WINDOW_WIDTH 800
-#define WINDOW_HEIGHT 800
-#define ROWS 100
-#define COLS 50
-#define RADIUS 2
-#define HORIZONTAL_SPACING 10
-#define VERTICAL_SPACING 10
-#define HORIZONTAL_SPACING_GRADIENT 1.03
-#define VERTICAL_SPACING_GRADIENT 0.98
-#define RADIUS_GRADIENT 0.99
+#define WINDOW_WIDTH 1000
+#define WINDOW_HEIGHT 1000
+//#define ROWS 100
+//#define COLS 50
+//#define RADIUS 2
+//#define HORIZONTAL_SPACING 10
+//#define VERTICAL_SPACING 10
+//#define HORIZONTAL_SPACING_GRADIENT 1.03
+//#define VERTICAL_SPACING_GRADIENT 0.98
+//#define RADIUS_GRADIENT 0.99
 
 int SDL_RenderDrawCircle(SDL_Renderer *renderer, int x, int y, int radius) {
     int offsetx, offsety, d;
     int status;
 
     x += WINDOW_WIDTH / 2;
-    y += HORIZONTAL_SPACING + 2 * RADIUS;
+    y += 10;
+
+    //CHECK_RENDERER_MAGIC(renderer, -1);
 
     offsetx = 0;
     offsety = radius;
@@ -60,8 +62,10 @@ int SDL_RenderFillCircle(SDL_Renderer *renderer, int x, int y, int radius) {
     int offsetx, offsety, d;
     int status;
 
+    //CHECK_RENDERER_MAGIC(renderer, -1);
+
     x += WINDOW_WIDTH / 2;
-    y += HORIZONTAL_SPACING + 2 * RADIUS;
+    y += 10;
 
     offsetx = 0;
     offsety = radius;
@@ -100,6 +104,7 @@ int SDL_RenderFillCircle(SDL_Renderer *renderer, int x, int y, int radius) {
     return status;
 }
 
+
 // Function to initialize SDL
 int initSDL(SDL_Window **window, SDL_Renderer **renderer) {
     if (SDL_Init(SDL_INIT_VIDEO) < 0) {
@@ -125,45 +130,34 @@ int initSDL(SDL_Window **window, SDL_Renderer **renderer) {
     return 0;
 }
 
-// Function to draw a grid of points
-void drawGrid(SDL_Renderer *renderer) {
-    SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
-
-    double x_center = 0;
-    double y_center = 0;
-    double x_offset = 0;
-
-    for (int row = 0; row < ROWS; ++row) {
-        if (row % 2) x_offset = 0;
-        else
-            x_offset = HORIZONTAL_SPACING * pow(HORIZONTAL_SPACING_GRADIENT, row) / 2 + RADIUS;
-
-        x_center = x_offset;
-        for (int col = 0; col < COLS / 2; ++col) {
-            SDL_RenderFillCircle(renderer, x_center, y_center, RADIUS * pow(RADIUS_GRADIENT, row));
-
-            x_center += HORIZONTAL_SPACING * pow(HORIZONTAL_SPACING_GRADIENT, row) + 2 * RADIUS;
-        }
-
-        x_center = x_offset;
-        for (int col = 0; col < COLS / 2; ++col) {
-            SDL_RenderFillCircle(renderer, x_center, y_center, RADIUS * pow(RADIUS_GRADIENT, row));
-
-            x_center -= HORIZONTAL_SPACING * pow(HORIZONTAL_SPACING_GRADIENT, row) + 2 * RADIUS;
-        }
-
-        y_center += VERTICAL_SPACING * pow(VERTICAL_SPACING_GRADIENT, row) + 2 * RADIUS;
-    }
-}
 
 // Main function
-int main(int argc, char *argv[]) {
+int main() {
     SDL_Window *window = NULL;
     SDL_Renderer *renderer = NULL;
 
     // Initialize SDL and create window & renderer
     if (initSDL(&window, &renderer) != 0) {
         return -1;
+    }
+
+    void circle(double x_center, double y_center, double radius) {
+        SDL_RenderFillCircle(renderer, (int)x_center, (int)y_center, (int)radius);
+    }
+
+    void polygon(int num, double nodes[]) {
+        for (int i = 0; i < num * 2; i += 2) {
+            nodes[i] += WINDOW_WIDTH / 2;
+            nodes[i + 1] += 10;
+        }
+
+        for (int i = 0; i < num * 2; i += 2) {
+            SDL_RenderDrawLine(renderer, (int)round(nodes[i]), (int)round(nodes[i + 1]), (int)round(nodes[(i + 2) % (num * 2)]), (int)round(nodes[(i + 3) % (num * 2)]));
+        }
+    }
+
+    void layer(char layer_str[]) {
+        // printf("%s", layer_str);
     }
 
     // Main loop flag and event handler
@@ -184,7 +178,8 @@ int main(int argc, char *argv[]) {
         SDL_RenderClear(renderer);
 
         // Draw the grid of points
-        drawGrid(renderer);
+        SDL_SetRenderDrawColor(renderer, 255, 255, 255, 255);
+#include "clewinfunction"
 
         // Present the rendered content
         SDL_RenderPresent(renderer);
