@@ -1,16 +1,16 @@
 
 // Define honeycomb parameters
-#define LAYER "#6"    // Layer name or number
-#define RADIUS 10.0   // Radius of each hexagon
-#define ROWS 40       // Number of rows in the honeycomb
-#define COLUMNS 40    // Number of columns in the honeycomb
-#define SQRT_3 1.73205// Approximation of sqrt(3)
-#define HORIZONTAL_SPACING 10.0
-#define VERTICAL_SPACING 10.0
-#define HORIZONTAL_SPACING_GRADIENT 1.05
-#define VERTICAL_SPACING_GRADIENT 1.05
-#define RADIUS_GRADIENT 1.025
-#define HEXAGON 1// 1  hexagons or 0 for circles
+#define LAYER "#6"            // Layer name or number
+const double RADIUS = 10.0;   // Radius of each hexagon
+const int ROWS = 40;          // Number of rows in the honeycomb
+const int COLUMNS = 40;       // Number of columns in the honeycomb
+const double SQRT_3 = 1.73205;// Approximation of sqrt(3)
+const double HORIZONTAL_SPACING = 10.0;
+const double VERTICAL_SPACING = 10.0;
+const double HORIZONTAL_SPACING_GRADIENT = 1.05;
+const double VERTICAL_SPACING_GRADIENT = 1.05;
+const double RADIUS_GRADIENT = 1.025;
+const int HEXAGON = 1;// 1  hexagons or 0 for circles
 
 void DrawCircle(double xCenter, double yCenter, double radius) {
     layer(LAYER);
@@ -44,13 +44,12 @@ void DrawHexagon(double xCenter, double yCenter, double radius) {
 void DrawHoneycomb() {
     double x_offset, x_center, y_center;
     int row, col;
-    double drow, dcol;
+    double drow;
 
     x_center = 0;
     y_center = 0;
     x_offset = 0;
     drow = 0.0;
-    dcol = 0.0;
 
     for (row = 0; row < ROWS; ++row) {
         if (row % 2) x_offset = 0;
@@ -62,7 +61,7 @@ void DrawHoneycomb() {
             if (HEXAGON)
                 DrawHexagon(x_center, y_center, RADIUS + RADIUS * (RADIUS_GRADIENT - 1.0) * drow);
             else
-                DrawCircle(x_center, y_center, RADIUS + RADIUS * (RADIUS_GRADIENT - 1.0) * row);
+                DrawCircle(x_center, y_center, RADIUS + RADIUS * (RADIUS_GRADIENT - 1.0) * drow);
 
             x_center += HORIZONTAL_SPACING + HORIZONTAL_SPACING * (HORIZONTAL_SPACING_GRADIENT - 1.0) * drow + 2 * RADIUS;
         }
@@ -72,7 +71,7 @@ void DrawHoneycomb() {
             if (HEXAGON)
                 DrawHexagon(x_center, y_center, RADIUS + RADIUS * (RADIUS_GRADIENT - 1.0) * drow);
             else
-                DrawCircle(x_center, y_center, RADIUS + RADIUS * (RADIUS_GRADIENT - 1.0) * row);
+                DrawCircle(x_center, y_center, RADIUS + RADIUS * (RADIUS_GRADIENT - 1.0) * drow);
 
             x_center -= HORIZONTAL_SPACING + HORIZONTAL_SPACING * (HORIZONTAL_SPACING_GRADIENT - 1.0) * drow + 2 * RADIUS;
         }
@@ -80,7 +79,6 @@ void DrawHoneycomb() {
         y_center += VERTICAL_SPACING + VERTICAL_SPACING * (VERTICAL_SPACING_GRADIENT - 1.0) * drow + 2 * RADIUS;
 
         drow += 1.0;
-        dcol += 1.0;
     }
 }
 
